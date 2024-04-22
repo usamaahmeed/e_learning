@@ -94,7 +94,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       hintStyle: TextStyle(
                         color: Color(0xff505050),
                         fontWeight: FontWeight.w700,
-                        fontSize: 14,
+                        fontSize: 15,
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
