@@ -1,4 +1,5 @@
 import 'package:e_learning/Features/Lets_you_in/presentation/views/widgets/cirecle_avatar.dart';
+import 'package:e_learning/Features/sign_up/presentation/views/sign_up.dart';
 import 'package:e_learning/core/utils/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -117,12 +118,23 @@ class _ChoseScreenState extends State<ChoseScreen> {
                     const SizedBox(
                       width: 4,
                     ),
-                    const Text(
-                      'SIGN UP',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w800,
-                        fontSize: 14,
-                        color: Color(0xff0961F5),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return const SignUpScreen();
+                            },
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        'SIGN UP',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 14,
+                          color: Color(0xff0961F5),
+                        ),
                       ),
                     ),
                   ],
@@ -161,7 +173,9 @@ class _ChoseScreenState extends State<ChoseScreen> {
   //login with facebook
   Future<UserCredential> signInWithFacebook() async {
     // Trigger the sign-in flow
-    final LoginResult loginResult = await FacebookAuth.instance.login();
+    final LoginResult loginResult = await FacebookAuth.instance.login(
+      permissions: ['email', 'public_profile'],
+    );
 
     // Create a credential from the access token
     final OAuthCredential facebookAuthCredential =

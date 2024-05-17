@@ -12,23 +12,36 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: TextButton(
-          onPressed: () {
-            if (FirebaseAuth.instance.currentUser != null) {
-              FirebaseAuth.instance.signOut();
-              FacebookAuth.instance.logOut();
-              GoogleSignIn().signOut();
-            } else {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return SignInScreen();
-                  },
-                ),
-              );
-            }
-          },
-          child: Text('Logout'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'hallo there!',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 24,
+                color: Color(0xff202244),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                if (FirebaseAuth.instance.currentUser != null) {
+                  FirebaseAuth.instance.signOut();
+                  FacebookAuth.instance.logOut();
+                  GoogleSignIn().signOut();
+                } else {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return SignInScreen();
+                      },
+                    ),
+                  );
+                }
+              },
+              child: Text('Logout'),
+            ),
+          ],
         ),
       ),
     );

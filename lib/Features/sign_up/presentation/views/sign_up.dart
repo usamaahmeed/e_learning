@@ -1,18 +1,19 @@
 import 'package:e_learning/Features/Lets_you_in/presentation/views/lets_you_in.dart';
 import 'package:e_learning/Features/home/presentation/view/home_screen.dart';
-import 'package:e_learning/Features/sign_up/presentation/views/sign_up.dart';
+import 'package:e_learning/Features/sign_in/presentation/views/sign_in.dart';
 import 'package:e_learning/core/utils/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
-  State<SignInScreen> createState() => _SignInScreenState();
+  State<SignUpScreen> createState() => _SignInScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class _SignInScreenState extends State<SignUpScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
@@ -35,7 +36,7 @@ class _SignInScreenState extends State<SignInScreen> {
             children: [
               CircularProgressIndicator(),
               SizedBox(width: 20),
-              Text("Signing in..."),
+              Text("Signing up..."),
             ],
           ),
         );
@@ -75,7 +76,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     height: 60,
                   ),
                   const Text(
-                    'Let’s Sign In.!',
+                    'Getting Started.!',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w600,
@@ -86,7 +87,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     height: 10,
                   ),
                   const Text(
-                    'Login to Your Account to Continue your Courses',
+                    'Create an Account to Continue your allCourses',
                     maxLines: 2,
                     style: TextStyle(
                       fontSize: 14,
@@ -98,24 +99,22 @@ class _SignInScreenState extends State<SignInScreen> {
                     height: 50,
                   ),
                   TextFormField(
+                    inputFormatters: [
+                      FilteringTextInputFormatter.deny(RegExp(r'[@.]')),
+                    ],
                     controller: emailController,
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
-                      if (value!.length < 10) {
-                        return 'Email should be at least 10 characters';
+                      if (!(value!.length > 10)) {
+                        return 'Email should be 10 characters long ';
                       }
-                      if (!(value!.contains('@edu') &&
-                          value.contains('\.com') &&
-                          value.length > 10)) {
-                        return 'Email should  contain @edu.com';
-                      }
-
                       return null;
                     },
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
                       prefixIcon: Icon(Icons.mail_outline_outlined),
+                      suffix: Text('@edu.com'),
                       hintText: 'Email',
                       hintStyle: TextStyle(
                         color: Color(0xff505050),
@@ -196,6 +195,8 @@ class _SignInScreenState extends State<SignInScreen> {
                   Row(
                     children: [
                       Checkbox(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
                         side: BorderSide(width: 2, color: Color(0xff167F71)),
                         checkColor: Colors.white,
                         activeColor: Color(0xff167F71),
@@ -207,18 +208,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         },
                       ),
                       const Text(
-                        'Remember Me',
-                        style: TextStyle(
-                          color: Color(0xff545454),
-                          fontSize: 13,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      Expanded(
-                        child: SizedBox(),
-                      ),
-                      const Text(
-                        'Forgot Password?',
+                        'Agree to Terms & Conditions',
                         style: TextStyle(
                           color: Color(0xff545454),
                           fontSize: 13,
@@ -232,32 +222,65 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                   ElevatedButton(
                     onPressed: () async {
+                      if (!formKey.currentState!.validate()) {
+                        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: Colors.red,
+                            content: Text('Please fill in the text'),
+                          ),
+                        );
+                      }
+                      if (!_checkbox && formKey.currentState!.validate()) {
+                        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: Colors.red,
+                            content:
+                                Text('Please agree to the Terms & Conditions'),
+                          ),
+                        );
+                        return;
+                      }
+
                       if (formKey.currentState!.validate()) {
+                        emailController.text =
+                            emailController.text + '@edu\.com';
                         _showLoadingDialog();
+
                         try {
-                          await _auth.signInWithEmailAndPassword(
-                            email: emailController.text,
+                          String email = emailController.text;
+                          await _auth.createUserWithEmailAndPassword(
+                            email: email,
                             password: passwordController.text,
                           );
                           _hideLoadingDialog();
-
-                          // Navigate to home screen after successful sign in
-                          navigateToHome(context);
-                        } catch (e) {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return HomeScreen();
+                              },
+                            ),
+                          );
+                        } catch (error) {
                           _hideLoadingDialog();
-                          // Show error message if sign in fails
                           ScaffoldMessenger.of(context).removeCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               backgroundColor: Colors.red,
-                              content: Text('Failed to sign in'),
+                              content: Text(
+                                  'The email address is already in use (Sign in)'),
                             ),
                           );
+                          emailController.text = '';
+                          passwordController.text = '';
+                          _checkbox = false;
                         }
                       }
                     },
                     child: Text(
-                      'Sign In',
+                      'Sign Up',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -265,8 +288,9 @@ class _SignInScreenState extends State<SignInScreen> {
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                        fixedSize: Size(MediaQuery.sizeOf(context).width, 60),
-                        backgroundColor: Color(0xff0961F5)),
+                      fixedSize: Size(MediaQuery.sizeOf(context).width, 60),
+                      backgroundColor: Color(0xff0961F5),
+                    ),
                   ),
                   const SizedBox(
                     height: 25,
@@ -315,7 +339,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Text(
-                        'Don’t have an Account?',
+                        'Have an Account?',
                         style: TextStyle(
                           fontWeight: FontWeight.w800,
                           fontSize: 14,
@@ -327,17 +351,16 @@ class _SignInScreenState extends State<SignInScreen> {
                       ),
                       InkWell(
                         onTap: () {
-                          // Navigate to sign up screen
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
                               builder: (context) {
-                                return SignUpScreen();
+                                return SignInScreen();
                               },
                             ),
                           );
                         },
                         child: const Text(
-                          'SIGN UP',
+                          'SIGN IN',
                           style: TextStyle(
                             fontWeight: FontWeight.w800,
                             fontSize: 14,
@@ -355,16 +378,6 @@ class _SignInScreenState extends State<SignInScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  navigateToHome(BuildContext context) {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) {
-          return HomeScreen();
-        },
       ),
     );
   }
