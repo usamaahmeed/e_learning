@@ -1,45 +1,94 @@
-import 'package:e_learning/Features/sign_in/presentation/views/sign_in.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:e_learning/Features/Profile/presentation/view/profile_screen.dart';
+import 'package:e_learning/Features/Timeline/presentation/view/timeline_screen.dart';
+import 'package:e_learning/Features/Transaction/presentation/view/transaction.dart';
+import 'package:e_learning/Features/indox/presentation/view/indox_screen.dart';
+import 'package:e_learning/Features/my_courses/presentation/view/my_courses.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int currentIndex = 0;
+  PageController _pageController = PageController();
+
+  final List<Widget> listOfScreens = const [
+    TimelineScreen(),
+    MyCourses(),
+    IndoxScreen(),
+    TransactionScreen(),
+    ProfileScreen(),
+  ];
+
+  void onPageChanged(int index) {
+    setState(() {
+      currentIndex = index;
+    });
+  }
+
+  void onItemTapped(int index) {
+    _pageController.jumpToPage(index);
+  }
+
+  Future<bool> _onWillPop() async {
+    if (currentIndex != 0) {
+      setState(() {
+        currentIndex = 0;
+        _pageController.jumpToPage(0);
+      });
+      return false;
+    }
+    return true;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'hallo there!',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 24,
-                color: Color(0xff202244),
-              ),
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        backgroundColor: Color(0xFFF5F9FF),
+        resizeToAvoidBottomInset: false,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 30, left: 24, right: 24),
+            child: PageView(
+              controller: _pageController,
+              onPageChanged: onPageChanged,
+              children: listOfScreens,
             ),
-            TextButton(
-              onPressed: () {
-                if (FirebaseAuth.instance.currentUser != null) {
-                  FirebaseAuth.instance.signOut();
-                  FacebookAuth.instance.logOut();
-                  GoogleSignIn().signOut();
-                } else {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return SignInScreen();
-                      },
-                    ),
-                  );
-                }
-              },
-              child: Text('Logout'),
+          ),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Color(0xFFF5F9FF),
+          type: BottomNavigationBarType.fixed,
+          currentIndex: currentIndex,
+          onTap: onItemTapped,
+          selectedItemColor: Color(0xff167F71),
+          unselectedItemColor: Colors.grey.shade300,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_outlined),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.my_library_books_outlined),
+              label: 'My Courses',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.mark_unread_chat_alt_outlined),
+              label: 'Indox',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.account_balance_wallet_outlined),
+              label: 'Transaction',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_2_outlined),
+              label: 'Profile',
             ),
           ],
         ),

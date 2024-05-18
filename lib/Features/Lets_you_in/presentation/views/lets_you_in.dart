@@ -1,4 +1,5 @@
 import 'package:e_learning/Features/Lets_you_in/presentation/views/widgets/cirecle_avatar.dart';
+import 'package:e_learning/Features/home/presentation/view/home_screen.dart';
 import 'package:e_learning/Features/sign_up/presentation/views/sign_up.dart';
 import 'package:e_learning/core/utils/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -45,8 +46,15 @@ class _ChoseScreenState extends State<ChoseScreen> {
                   height: 30,
                 ),
                 GestureDetector(
-                  onTap: () {
-                    signInWithGoogle();
+                  onTap: () async {
+                    await signInWithGoogle();
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return HomeScreen();
+                        },
+                      ),
+                    );
                   },
                   child: LoginWidget(
                     image: 'assets/images/Group 11.png',
@@ -59,6 +67,14 @@ class _ChoseScreenState extends State<ChoseScreen> {
                 GestureDetector(
                   onTap: () async {
                     await signInWithFacebook();
+                    //remove all screen and go to home screen
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return HomeScreen();
+                        },
+                      ),
+                    );
                   },
                   child: LoginWidget(
                     image: 'assets/images/facebook.png',
