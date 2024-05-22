@@ -49,48 +49,53 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _onWillPop,
-      child: Scaffold(
-        backgroundColor: Color(0xFFF5F9FF),
-        resizeToAvoidBottomInset: false,
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 30, left: 24, right: 24),
-            child: PageView(
-              controller: _pageController,
-              onPageChanged: onPageChanged,
-              children: listOfScreens,
+      child: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Scaffold(
+          backgroundColor: Color(0xFFF5F9FF),
+          resizeToAvoidBottomInset: false,
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: onPageChanged,
+                children: listOfScreens,
+              ),
             ),
           ),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Color(0xFFF5F9FF),
-          type: BottomNavigationBarType.fixed,
-          currentIndex: currentIndex,
-          onTap: onItemTapped,
-          selectedItemColor: Color(0xff167F71),
-          unselectedItemColor: Colors.grey.shade300,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.my_library_books_outlined),
-              label: 'My Courses',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.mark_unread_chat_alt_outlined),
-              label: 'Indox',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.account_balance_wallet_outlined),
-              label: 'Transaction',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_2_outlined),
-              label: 'Profile',
-            ),
-          ],
+          bottomNavigationBar: BottomNavigationBar(
+            backgroundColor: Color(0xFFF5F9FF),
+            type: BottomNavigationBarType.fixed,
+            currentIndex: currentIndex,
+            onTap: onItemTapped,
+            selectedItemColor: Color(0xff167F71),
+            unselectedItemColor: Colors.grey.shade300,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home_outlined),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.my_library_books_outlined),
+                label: 'My Courses',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.mark_unread_chat_alt_outlined),
+                label: 'Indox',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.account_balance_wallet_outlined),
+                label: 'Transaction',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person_2_outlined),
+                label: 'Profile',
+              ),
+            ],
+          ),
         ),
       ),
     );
