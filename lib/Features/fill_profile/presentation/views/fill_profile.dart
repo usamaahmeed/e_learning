@@ -105,7 +105,6 @@ class _FillProfileState extends State<FillProfile> {
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: SingleChildScrollView(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 15),
@@ -126,9 +125,10 @@ class _FillProfileState extends State<FillProfile> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const SizedBox(
-                            height: 30,
+                            height: 5,
                           ),
                           Center(
                             child: GestureDetector(
@@ -151,7 +151,7 @@ class _FillProfileState extends State<FillProfile> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 20),
+                          // SizedBox(height: 20),
                           TextFormField(
                             controller: _nameController,
                             keyboardType: TextInputType.text,
@@ -185,7 +185,7 @@ class _FillProfileState extends State<FillProfile> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 20),
+                          // SizedBox(height: 20),
                           TextFormField(
                             initialValue: user!.email,
                             readOnly: true,
@@ -223,7 +223,7 @@ class _FillProfileState extends State<FillProfile> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 20),
+                          // SizedBox(height: 20),
                           IntlPhoneField(
                             controller: _phoneController,
                             decoration: InputDecoration(
@@ -256,7 +256,7 @@ class _FillProfileState extends State<FillProfile> {
                               print(phone.completeNumber);
                             },
                           ),
-                          SizedBox(height: 20),
+                          // SizedBox(height: 20),
                           DropdownButtonFormField<String>(
                             value: gender,
                             decoration: InputDecoration(
@@ -306,7 +306,7 @@ class _FillProfileState extends State<FillProfile> {
                               return null;
                             },
                           ),
-                          SizedBox(height: 20),
+                          // SizedBox(height: 20),
                           TextFormField(
                             readOnly: true,
                             onTap: () => _selectDate(context),
@@ -336,7 +336,7 @@ class _FillProfileState extends State<FillProfile> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 20),
+                          // SizedBox(height: 20),
                           DropdownButtonFormField<String>(
                             value: _userType,
                             decoration: InputDecoration(
