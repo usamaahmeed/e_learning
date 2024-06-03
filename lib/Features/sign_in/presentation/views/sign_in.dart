@@ -31,6 +31,7 @@ class _SignInScreenState extends State<SignInScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Color(0xffF5F9FF),
           content: Row(
             children: [
               CircularProgressIndicator(),
@@ -199,25 +200,25 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     Row(
                       children: [
-                        Checkbox(
-                          side: BorderSide(width: 2, color: Color(0xff167F71)),
-                          checkColor: Colors.white,
-                          activeColor: Color(0xff167F71),
-                          value: _checkbox,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              _checkbox = value!;
-                            });
-                          },
-                        ),
-                        const Text(
-                          'Remember Me',
-                          style: TextStyle(
-                            color: Color(0xff545454),
-                            fontSize: 13,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
+                        // Checkbox(
+                        //   side: BorderSide(width: 2, color: Color(0xff167F71)),
+                        //   checkColor: Colors.white,
+                        //   activeColor: Color(0xff167F71),
+                        //   value: _checkbox,
+                        //   onChanged: (bool? value) {
+                        //     setState(() {
+                        //       _checkbox = value!;
+                        //     });
+                        //   },
+                        // ),
+                        // const Text(
+                        //   'Remember Me',
+                        //   style: TextStyle(
+                        //     color: Color(0xff545454),
+                        //     fontSize: 13,
+                        //     fontWeight: FontWeight.w800,
+                        //   ),
+                        // ),
                         Expanded(
                           child: SizedBox(),
                         ),

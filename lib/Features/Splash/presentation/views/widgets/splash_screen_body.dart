@@ -1,6 +1,6 @@
-import 'package:e_learning/Features/Lets_you_in/presentation/views/lets_you_in.dart';
 import 'package:e_learning/Features/Splash/presentation/views/widgets/sliding_pic.dart';
 import 'package:e_learning/Features/home/presentation/view/home_screen.dart';
+import 'package:e_learning/Features/sign_in/presentation/views/sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -76,7 +76,7 @@ class _SplashViewbodyState extends State<SplashViewbody>
                 if (user != null) {
                   return HomeScreen();
                 } else {
-                  return ChoseScreen();
+                  return SignInScreen();
                 }
               }),
         ),

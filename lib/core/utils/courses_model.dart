@@ -7,13 +7,17 @@ class Course {
   double rate;
   String aboutCourse;
   String instructor;
+  String courseId;
   int hours;
   int videos;
   List<String> reviews;
+
   String instructorImage;
   int instructorCoursesCount;
   int studentsFollowingCount;
   double instructorRating;
+  bool isBooked; // Indicates whether the user is registered for this course
+  bool isSold; // Indicates whether the course is sold
 
   Course({
     required this.id,
@@ -24,6 +28,7 @@ class Course {
     required this.rate,
     required this.aboutCourse,
     required this.instructor,
+    required this.courseId,
     required this.hours,
     required this.videos,
     required this.reviews,
@@ -31,26 +36,32 @@ class Course {
     required this.instructorCoursesCount,
     required this.studentsFollowingCount,
     required this.instructorRating,
+    required this.isBooked,
+    required this.isSold,
   });
 
   // Factory constructor to create a Course from a JSON object
   factory Course.fromJson(Map<String, dynamic> json) {
     return Course(
-      id: json['id'],
-      title: json['title'],
-      name: json['name'],
-      price: json['price'],
-      image: json['image'],
-      rate: json['rate'],
-      aboutCourse: json['aboutCourse'],
-      instructor: json['instructor'],
-      hours: json['hours'],
-      videos: json['videos'],
-      reviews: List<String>.from(json['reviews']),
-      instructorImage: json['instructorImage'],
-      instructorCoursesCount: json['instructorCoursesCount'],
-      studentsFollowingCount: json['studentsFollowingCount'],
-      instructorRating: json['instructorRating'],
+      id: json['id'] ?? 0,
+      title: json['title'] ?? '',
+      name: json['name'] ?? '',
+      price: json['price']?.toDouble() ?? 0.0,
+      image: json['image'] ?? '',
+      rate: json['rate']?.toDouble() ?? 0.0,
+      aboutCourse: json['aboutCourse'] ?? '',
+      instructor: json['instructor'] ?? '',
+      courseId: json['courseId'] ?? '',
+      hours: json['hours'] ?? 0,
+      videos: json['videos'] ?? 0,
+      reviews:
+          (json['reviews'] != null) ? List<String>.from(json['reviews']) : [],
+      instructorImage: json['instructorImage'] ?? '',
+      instructorCoursesCount: json['instructorCoursesCount'] ?? 0,
+      studentsFollowingCount: json['studentsFollowingCount'] ?? 0,
+      instructorRating: json['instructorRating']?.toDouble() ?? 0.0,
+      isBooked: json['isBooked'] ?? false,
+      isSold: json['isSold'] ?? false,
     );
   }
 
@@ -65,6 +76,7 @@ class Course {
       'rate': rate,
       'aboutCourse': aboutCourse,
       'instructor': instructor,
+      'courseId': courseId,
       'hours': hours,
       'videos': videos,
       'reviews': reviews,
@@ -72,6 +84,8 @@ class Course {
       'instructorCoursesCount': instructorCoursesCount,
       'studentsFollowingCount': studentsFollowingCount,
       'instructorRating': instructorRating,
+      'isBooked': isBooked,
+      'isSold': isSold,
     };
   }
 }

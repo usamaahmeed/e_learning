@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_learning/Features/Lets_you_in/presentation/views/lets_you_in.dart';
 import 'package:e_learning/Features/fill_profile/presentation/views/fill_profile.dart';
 import 'package:e_learning/Features/sign_in/presentation/views/sign_in.dart';
 import 'package:e_learning/core/utils/colors.dart';
+import 'package:e_learning/core/utils/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -33,6 +35,7 @@ class _SignInScreenState extends State<SignUpScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Color(0xffF5F9FF),
           content: Row(
             children: [
               CircularProgressIndicator(),
@@ -47,6 +50,39 @@ class _SignInScreenState extends State<SignUpScreen> {
 
   void _hideLoadingDialog() {
     Navigator.of(context).pop();
+  }
+
+  _showDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Color(0xffF5F9FF),
+          title: const Text('Terms & Conditions'),
+          content: SingleChildScrollView(
+            child: const Text(
+                'Welcome to our e-learning platform! Please read these Terms and Conditions carefully before using our services.\n1. User AccountsRegistration: You must create an account to access certain features. Provide accurate information and keep your login details secure.Account Security: You are responsible for all activities under your account.\n2. Courses and ContentCourse Access: When you enroll in a course, you can use the materials for personal and educational purposes only.Content Ownership: All content on our platform belongs to us or our content providers.\n3. Payments and RefundsPricing: Course prices are listed on our platform and may change.Payments: Payments are processed securely through our payment partners.Refunds: Refunds are handled on a case-by-case basis. Check our Refund Policy for details.\n4. User ConductProhibited Activities: Do not share your account, copy content, use automated systems, or engage in harmful activities.\n5. PrivacyPrivacy Policy: We care about your privacy. Please read our Privacy Policy to understand how we handle your personal information.\n6. Limitation of LiabilityWe are not responsible for indirect damages, loss of data, or any harm resulting from your use of our services.\n7. Changes to TermsWe may update these terms at any time. Continued use of our services means you accept the new terms.\n8. TerminationWe can suspend or terminate your account if you violate these terms.'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('No'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  _checkbox = true;
+                });
+                Navigator.of(context).pop();
+              },
+              child: const Text('Yes'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -206,10 +242,12 @@ class _SignInScreenState extends State<SignUpScreen> {
                           checkColor: Colors.white,
                           activeColor: Color(0xff167F71),
                           value: _checkbox,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              _checkbox = value!;
-                            });
+                          onChanged: (value) {
+                            _checkbox == true
+                                ? setState(() {
+                                    _checkbox = false;
+                                  })
+                                : _showDialog(context);
                           },
                         ),
                         const Text(
@@ -250,24 +288,55 @@ class _SignInScreenState extends State<SignUpScreen> {
                         }
 
                         if (formKey.currentState!.validate()) {
-                          emailController.text =
-                              emailController.text + '@edu\.com';
+                          String email = emailController.text + '@edu\.com';
+                          print(email);
                           _showLoadingDialog();
-
                           try {
-                            String email = emailController.text;
-                            await _auth.createUserWithEmailAndPassword(
-                              email: email,
-                              password: passwordController.text,
-                            );
-                            _hideLoadingDialog();
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return FillProfile();
-                                },
-                              ),
-                            );
+                            final signInMethods = await FirebaseFirestore
+                                .instance
+                                .collection('users')
+                                .get();
+                            List<UserModel> listOfUsers = [];
+                            for (final userDoc in signInMethods.docs) {
+                              final data = userDoc.data();
+                              if (data != null) {
+                                final modelUser = UserModel.fromJson(data);
+                                listOfUsers.add(modelUser);
+                                print(listOfUsers);
+                              }
+                            }
+
+                            if (listOfUsers
+                                .any((element) => element.email == email)) {
+                              _hideLoadingDialog();
+
+                              ScaffoldMessenger.of(context)
+                                  .removeCurrentSnackBar();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  backgroundColor: Colors.red,
+                                  content: Text(
+                                      'The email address is already in use (Sign in)'),
+                                ),
+                              );
+                              emailController.text = '';
+                              passwordController.text = '';
+                              setState(() {
+                                _checkbox = false;
+                              });
+                            } else {
+                              _hideLoadingDialog();
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return FillProfile(
+                                      email: email,
+                                      password: passwordController.text,
+                                    );
+                                  },
+                                ),
+                              );
+                            }
                           } catch (error) {
                             _hideLoadingDialog();
                             ScaffoldMessenger.of(context)
@@ -279,9 +348,6 @@ class _SignInScreenState extends State<SignUpScreen> {
                                     'The email address is already in use (Sign in)'),
                               ),
                             );
-                            emailController.text = '';
-                            passwordController.text = '';
-                            _checkbox = false;
                           }
                         }
                       },

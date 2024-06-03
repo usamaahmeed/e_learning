@@ -1,7 +1,6 @@
-import 'dart:io';
-
-import 'package:e_learning/Features/Lets_you_in/presentation/views/lets_you_in.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_learning/Features/Profile/presentation/view/edit_profile.dart';
+import 'package:e_learning/Features/sign_in/presentation/views/sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +21,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Color(0xffF5F9FF),
           title: const Text('Logout'),
           content: const Text('Are you sure you want to logout?'),
           actions: <Widget>[
@@ -43,7 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const ChoseScreen(),
+                    builder: (context) => const SignInScreen(),
                   ),
                 );
               },
@@ -67,7 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 15,
                 ),
                 Container(
-                  height: 800,
+                  height: 750,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -79,17 +79,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CircleAvatar(
-                        radius: 60.0,
-                        backgroundColor: Color(0xff167F71),
-                        child: CircleAvatar(
-                          // backgroundColor: Color(0xffd8d8d8),
-                          backgroundImage: user!.photoURL != null
-                              ? user!.photoURL!.contains('http')
-                                  ? NetworkImage(user!.photoURL!)
-                                  : FileImage(File(user!.photoURL!))
-                              : AssetImage('assets/images/avatar.png'),
-                          radius: 57,
-                        ),
+                        backgroundColor: Color(0xffE8F1FF),
+                        backgroundImage: user!.photoURL != null
+                            ? CachedNetworkImageProvider(user!.photoURL!)
+                            : AssetImage('assets/images/avatar.png'),
+                        radius: 57,
                       ),
                       SizedBox(height: 8),
                       Text(
@@ -139,32 +133,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ],
                         ),
                       ),
-                      SizedBox(height: 25),
-                      GestureDetector(
-                        onTap: () {},
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(CupertinoIcons.bookmark),
-                                SizedBox(
-                                  width: 13,
-                                ),
-                                Text(
-                                  'Book Mark',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xff202244)),
-                                ),
-                                SizedBox(width: 84),
-                              ],
-                            ),
-                            Icon(Icons.arrow_forward_ios_outlined),
-                          ],
-                        ),
-                      ),
+                      // SizedBox(height: 25),
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     Navigator.of(context).push(
+                      //       MaterialPageRoute(
+                      //         builder: (context) {
+                      //           return BookMark();
+                      //         },
+                      //       ),
+                      //     );
+                      //   },
+                      //   child: Row(
+                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //     children: [
+                      //       Row(
+                      //         children: [
+                      //           Icon(CupertinoIcons.bookmark),
+                      //           SizedBox(
+                      //             width: 13,
+                      //           ),
+                      //           Text(
+                      //             'Book Mark',
+                      //             style: TextStyle(
+                      //                 fontSize: 15,
+                      //                 fontWeight: FontWeight.bold,
+                      //                 color: Color(0xff202244)),
+                      //           ),
+                      //           SizedBox(width: 84),
+                      //         ],
+                      //       ),
+                      //       Icon(Icons.arrow_forward_ios_outlined),
+                      //     ],
+                      //   ),
+                      // ),
                       SizedBox(height: 25),
                       GestureDetector(
                         onTap: () {},

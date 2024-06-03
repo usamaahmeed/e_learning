@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_learning/Features/home/presentation/view/home_screen.dart';
 import 'package:e_learning/core/utils/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,9 +17,9 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
+  @override
   void initState() {
     super.initState();
-
     _fetchUserProfile();
     _nameController.text = user!.displayName ?? '';
   }
@@ -41,7 +42,6 @@ class _EditProfileState extends State<EditProfile> {
     }
   }
 
-  @override
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
 
@@ -55,7 +55,7 @@ class _EditProfileState extends State<EditProfile> {
   File? _image;
   String? gender;
   String? _imagePath;
-  @override
+
   Future<void> _pickImage() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -68,6 +68,86 @@ class _EditProfileState extends State<EditProfile> {
     }
   }
 
+  Future<String?> _uploadImage(File image) async {
+    try {
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('profile_images')
+          .child('${user!.uid}.jpg');
+      await storageRef.putFile(image);
+      final downloadUrl = await storageRef.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      print('Failed to upload image: $e');
+      return null;
+    }
+  }
+
+  Future<void> _updateUserProfile() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        _showLoadingDialog();
+        String? imageUrl;
+        if (_image != null) {
+          imageUrl = await _uploadImage(_image!);
+        }
+
+        if (user != null) {
+          // Update Firebase Authentication profile
+          await user!.updateProfile(
+            displayName: _nameController.text,
+            photoURL: imageUrl ?? user!.photoURL,
+          );
+
+          // Update Firestore with new user data
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user!.uid)
+              .set({
+            'name': _nameController.text,
+            'photoURL': imageUrl ?? user!.photoURL,
+          }, SetOptions(merge: true)); // merge: true to update existing data
+
+          _hideLoadingDialog();
+
+          // Navigate to HomeScreen
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomeScreen(),
+            ),
+          );
+        }
+      } catch (e) {
+        // Handle profile update errors here
+        print('Failed to update profile: $e');
+      }
+    }
+  }
+
+  void _showLoadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Color(0xffF5F9FF),
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text("Updating..."),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _hideLoadingDialog() {
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -78,6 +158,19 @@ class _EditProfileState extends State<EditProfile> {
         },
         child: Scaffold(
           backgroundColor: ColorsData.backgroundColor,
+          appBar: AppBar(
+            backgroundColor: Color(0xFFF5F9FF),
+            title: Text(
+              'Edit Your Profile',
+              style: TextStyle(
+                fontSize: 21,
+                fontWeight: FontWeight.w600,
+                color: Color(0xff202244),
+              ),
+            ),
+            elevation: 0,
+            surfaceTintColor: Color(0xFFF5F9FF),
+          ),
           body: SafeArea(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
@@ -86,25 +179,6 @@ class _EditProfileState extends State<EditProfile> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 15),
-                    Row(
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: Icon(Icons.arrow_back_ios)),
-                        Text(
-                          'Edit Your Profile',
-                          style: TextStyle(
-                            color: Color(0XFF202244),
-                            fontSize: 21,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
                     Container(
                       height: 570,
                       padding: EdgeInsets.symmetric(horizontal: 10),
@@ -291,29 +365,7 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                     const SizedBox(height: 38),
                     ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          try {
-                            User? user = FirebaseAuth.instance.currentUser;
-
-                            await user?.updateProfile(
-                              displayName: _nameController.text,
-                              photoURL: _imagePath != null
-                                  ? _imagePath
-                                  : user!.photoURL,
-                            );
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => HomeScreen(),
-                              ),
-                            );
-                          } catch (e) {
-                            // Handle profile update errors here
-                            print('Failed to update profile: $e');
-                          }
-                        }
-                      },
+                      onPressed: _updateUserProfile,
                       child: Text(
                         'Update',
                         style: TextStyle(

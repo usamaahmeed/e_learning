@@ -20,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
     TimelineScreen(),
     MyCourses(),
     IndoxScreen(),
-    TransactionScreen(),
+    BookMark(),
     ProfileScreen(),
   ];
 
@@ -72,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
             currentIndex: currentIndex,
             onTap: onItemTapped,
             selectedItemColor: Color(0xff167F71),
-            unselectedItemColor: Colors.grey.shade300,
+            unselectedItemColor: Colors.grey.shade500,
             items: const [
               BottomNavigationBarItem(
                 icon: Icon(Icons.home_outlined),
@@ -87,8 +87,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 label: 'Indox',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.account_balance_wallet_outlined),
-                label: 'Transaction',
+                icon: Icon(Icons.bookmark_border_outlined),
+                label: 'Saved',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person_2_outlined),

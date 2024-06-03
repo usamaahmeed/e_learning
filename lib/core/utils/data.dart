@@ -1,14 +1,23 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_learning/core/utils/courses_model.dart';
 
 List<String> images2 = [
   'assets/images/slider/image1.png',
   'assets/images/slider/image2.png',
-  'assets/images/slider/image3.png',
   'assets/images/slider/image7.png',
-  'assets/images/slider/image4.png',
   'assets/images/slider/image5.png',
   'assets/images/slider/image6.png',
   'assets/images/slider/slider1.png',
+];
+
+List<String> reviews = [
+  'assets/images/reviews/instractor12.png',
+  'assets/images/reviews/instractor13.png',
+  'assets/images/reviews/man1.png',
+  'assets/images/reviews/man2.png',
+  'assets/images/reviews/man3.png',
+  'assets/images/reviews/man5.png',
+  'assets/images/reviews/man6.png',
 ];
 List<String> category = [
   '3D Design',
@@ -25,99 +34,8 @@ List<String> category1 = [
   '3D Design',
   'Graphic Design',
 ];
-Course cousre1 = Course(
-  id: 1,
-  title: '3D Design',
-  name: 'Master SketchUp - A Definitive Guide From Infinite Skills',
-  price: 299,
-  image: 'assets/images/courses/3D Design.png',
-  rate: 4.2,
-  aboutCourse:
-      'This SketchUp 2013 training course from Infinite Skills teaches you how to model a home from scratch using this popular 3D modeling program. This tutorial is designed for the absolute beginner, meaning no prior experience with SketchUP or 3D modeling is required.You will start by learning the basics of the drawing tools, and then quickly jump into learning to create different roof types. This course will show you how to organize the model, including creating the second floor and additional openings, using the outliner, and viewing layer states of the model. This video tutorial will show you how to create the different parts of a home, including the ceiling, staircase, doors and windows, fireplace, and kitchen. You will learn how to add furniture using the 3D warehouse and model the furniture from a photograph. You will then move to creating the exterior of the home, from setting the building in place to adding solar panels. Finally, Dan will show you various exporting options and how to create a rendering and animation.By the completion of this computer based training course, you will be comfortable using many of the basic and complex tools in SketchUp. Working files are included, allowing you to follow along with the author throughout the lessons.',
-  instructor: 'Mohamed Ahmed',
-  hours: 5,
-  videos: 5,
-  reviews: [
-    'It\'s good and informative. Got to know a lot of techniques. Awesome explanation',
-    'Gostava de ter o Sketchup numa plataforma virtual para exercer ao mesmo tempo',
-    'Great Course!',
-    'Muy bien explicado y entendible, buen material.',
-  ],
-  instructorImage: '',
-  instructorCoursesCount: 656,
-  studentsFollowingCount: 332,
-  instructorRating: 9825,
-);
 
 final List<Course> coursesList = [
-  Course(
-    id: 1,
-    title: '3D Design',
-    name: 'Master SketchUp - A Definitive Guide From Infinite Skills',
-    price: 299,
-    image: 'assets/images/courses/3D Design.png',
-    rate: 4.2,
-    aboutCourse:
-        'This SketchUp 2013 training course from Infinite Skills teaches you how to model a home from scratch using this popular 3D modeling program. This tutorial is designed for the absolute beginner, meaning no prior experience with SketchUP or 3D modeling is required.You will start by learning the basics of the drawing tools, and then quickly jump into learning to create different roof types. This course will show you how to organize the model, including creating the second floor and additional openings, using the outliner, and viewing layer states of the model. This video tutorial will show you how to create the different parts of a home, including the ceiling, staircase, doors and windows, fireplace, and kitchen. You will learn how to add furniture using the 3D warehouse and model the furniture from a photograph. You will then move to creating the exterior of the home, from setting the building in place to adding solar panels. Finally, Dan will show you various exporting options and how to create a rendering and animation.By the completion of this computer based training course, you will be comfortable using many of the basic and complex tools in SketchUp. Working files are included, allowing you to follow along with the author throughout the lessons.',
-    instructor: 'Mohamed Ahmed',
-    hours: 5,
-    videos: 5,
-    reviews: [
-      'It\'s good and informative. Got to know a lot of techniques. Awesome explanation',
-      'Gostava de ter o Sketchup numa plataforma virtual para exercer ao mesmo tempo',
-      'Great Course!',
-      'Muy bien explicado y entendible, buen material.',
-    ],
-    instructorImage: 'assets/images/insrtactor/instractor.png',
-    instructorCoursesCount: 2,
-    studentsFollowingCount: 856,
-    instructorRating: 700,
-  ),
-  Course(
-    id: 1,
-    title: '3D Design',
-    name: 'SketchUp for Woodworkers: bring your designs to life in 3D',
-    price: 399,
-    image: 'assets/images/courses/3D Design1.png',
-    rate: 4.5,
-    aboutCourse:
-        'Let me teach you the basic methods I use in SketchUp as a professional illustrator and designer with 20 years experience in woodworking magazines!I have drawn thousands of woodworking projects for magazines in the UK, US and Europe, and currently illustrate 2 top UK titles, Furniture and Cabinetmaking and Woodworking Crafts.SketchUp has been a big part of this process. It is a great drawing program, and although its hard to find, you can still download the FREE version called SketchUp Make.Just in case you are having trouble finding Sketch Make, the free version you can install on your computer, search for SketchUp Make in Google and follow the instructions. This is a different and much more powerful version of SketchUp to the online browser based SketchUp Free.Learning the basic tools is just the start though. You can save yourself so much time and effort by using a few simple methods I show you in the course.Using these techniques, you will find it much easier to design and draw your own projects!Drawing in 3D can be huge fun, seeing something you have imagined coming to life.It can also be a bit daunting at first, and without a clear structure to guide you, its possible to get a bit lost. This is why you need my course.',
-    instructor: 'Mohamed Ahmed',
-    hours: 8,
-    videos: 5,
-    reviews: [
-      'There was a step missing in the finger pull section, in the current web version I couldn\'t get the model to leave the intersecting part of the oval shape to stay and I didn\'t get what exactly to do after exploding the oval.',
-      'It\'s a good course for me because it is not too slow; I can stop it and catch up when it is too fast but I don\'t get bored because it covers too many basics that I already know.',
-      'It was a good video, but it could have extended its length with more detail. Ended abruptly',
-      'well explained so far',
-    ],
-    instructorImage: 'assets/images/insrtactor/instractor.png',
-    instructorCoursesCount: 2,
-    studentsFollowingCount: 856,
-    instructorRating: 700,
-  ),
-  Course(
-    id: 1,
-    title: '3D Design',
-    name: '3ds Max + V-Ray: 3ds Max PRO in 6 hrs',
-    price: 259,
-    image: 'assets/images/courses/3D Design2.png',
-    rate: 4.1,
-    aboutCourse:
-        'Chaos Vantage | Easily turn any rendering into a professional level animationThis new section goes over all the basics of Chaos Vantage (all the settings) and culminates with a demonstration of how archviz artists can use it to quickly and easily animate their projects. It is so easy to learn, but so powerful in enhancing workflows to be more efficient and streamlined, especially for animation. *Includes project downloads',
-    instructor: 'Adam Zollinger',
-    hours: 6,
-    videos: 8,
-    reviews: [
-      'The course is really poorly structured and the lecturer focuses more on showing how he works rather than teaching how to use the softwares so you can develop your own workflow.The only salvageable aspect of the course is its rendering parts, which felt like 80% of the course. He gives a lot of tips and useful approaches, but sometimes he repeats stuff even more than twice. For 3DS Max I felt I learned something through brute force, but would probably have learnt more and faster just reading the online documentation. He doesn\'t stop to thoroughly explain the interface, which I think is the most important part of teaching a new software. Photoshop is barely touched or explained, you would maybe learn something useful if you already know how to use it at an intermediate level.I give 1 star because of the previous mentioned problems and also because most of the extra lessons are just his YouTube videos uploaded on here, he even advertises this course on one of them. Can\'t really recommend it to anyone.'
-          'his explanations and directions were easy to understand',
-      'very well',
-    ],
-    instructorImage: 'assets/images/insrtactor/instractor4.png',
-    instructorCoursesCount: 1,
-    studentsFollowingCount: 500,
-    instructorRating: 451,
-  ),
   Course(
     id: 2,
     title: 'Flutter',
@@ -139,203 +57,17 @@ final List<Course> coursesList = [
     instructorCoursesCount: 2,
     studentsFollowingCount: 951,
     instructorRating: 1546,
-  ),
-  Course(
-    id: 2,
-    title: 'Flutter',
-    name: 'Flutter & Dart - The Complete Guide [2024 Edition]',
-    price: 259,
-    image: 'assets/images/courses/flutter1.png',
-    rate: 4.1,
-    aboutCourse:
-        'This Flutter & Dart course is designed for absolute beginners with no prior programming experience, as well as for those with existing iOS, Android or other development skills. Through video lessons and hands-on projects, you\'ll learn the ins and outs of Flutter and Dart!Throughout the course you\'ll build multiple demo apps - ranging from simple to more complex - and, by the end of the course, you\'ll be able to build your own iOS and Android apps with Flutter.',
-    instructor: 'Ashraf Mohamed',
-    hours: 6,
-    videos: 8,
-    reviews: [
-      'READ CAREFULLY! m... NOT a MARKETER but a normal person on udemy taking a course!A 4 Year Old Course! Many had written in comments about the outdated course!It may be the outdated course! But Especially me who was a fresher in MOBILE DEV field(Experienced in WEB DEV) fells that this is the BEST COURSE to prepare for the BASE of FLUTTER.FLUTTER TEAM has updated FLUTTER CONCEPTS more frequently in last 4 years but this course will TEACH you in SUCH a WAY that is MUST to LEARN before moving to LATEST Concepts.Its like you can\'t learn reading without knowing the abcd...z letters.GOING through each video 4-5 times makes you understand deeply and it really CREATES your BASE Knowledge of FLUTTER Strong.I would really say that you will be confident to make a career in flutter!'
-          'his explanations and directions were easy to understand',
-      'It was an amazing experience! The flexibility, interactive content, and supportive community made learning [subject/course name] both enjoyable and rewarding. Highly recommend giving it a try!',
-    ],
-    instructorImage: 'assets/images/insrtactor/instractor3.png',
-    instructorCoursesCount: 1,
-    studentsFollowingCount: 843,
-    instructorRating: 604,
-  ),
-  Course(
-    id: 2,
-    title: 'Flutter',
-    name: 'Flutter & Firebase Tutorial: Build 5 Social Media Apps',
-    price: 259,
-    image: 'assets/images/courses/flutter2.png',
-    rate: 4.5,
-    aboutCourse:
-        'This Flutter & Dart course is designed for absolute beginners with no prior programming experience, as well as for those with existing iOS, Android or other development skills. Through video lessons and hands-on projects, you\'ll learn the ins and outs of Flutter and Dart!Throughout the course you\'ll build multiple demo apps - ranging from simple to more complex - and, by the end of the course, you\'ll be able to build your own iOS and Android apps with Flutter.',
-    instructor: 'Kerolos Fady',
-    hours: 6,
-    videos: 8,
-    reviews: [
-      'READ CAREFULLY! m... NOT a MARKETER but a normal person on udemy taking a course!A 4 Year Old Course! Many had written in comments about the outdated course!It may be the outdated course! But Especially me who was a fresher in MOBILE DEV field(Experienced in WEB DEV) fells that this is the BEST COURSE to prepare for the BASE of FLUTTER.FLUTTER TEAM has updated FLUTTER CONCEPTS more frequently in last 4 years but this course will TEACH you in SUCH a WAY that is MUST to LEARN before moving to LATEST Concepts.Its like you can\'t learn reading without knowing the abcd...z letters.GOING through each video 4-5 times makes you understand deeply and it really CREATES your BASE Knowledge of FLUTTER Strong.I would really say that you will be confident to make a career in flutter!'
-          'his explanations and directions were easy to understand',
-      'It was an amazing experience! The flexibility, interactive content, and supportive community made learning [subject/course name] both enjoyable and rewarding. Highly recommend giving it a try!',
-    ],
-    instructorImage: 'assets/images/insrtactor/instractor111.png',
-    instructorCoursesCount: 1,
-    studentsFollowingCount: 651,
-    instructorRating: 610,
-  ),
-  Course(
-    id: 2,
-    title: 'Flutter',
-    name: 'Flutter Advanced Course - Clean Architecture With MVVM',
-    price: 259,
-    image: 'assets/images/courses/flutter3.png',
-    rate: 4.6,
-    aboutCourse:
-        'This Flutter & Dart course is designed for absolute beginners with no prior programming experience, as well as for those with existing iOS, Android or other development skills. Through video lessons and hands-on projects, you\'ll learn the ins and outs of Flutter and Dart!Throughout the course you\'ll build multiple demo apps - ranging from simple to more complex - and, by the end of the course, you\'ll be able to build your own iOS and Android apps with Flutter.',
-    instructor: 'Osama Mosa',
-    hours: 6,
-    videos: 8,
-    reviews: [
-      'READ CAREFULLY! m... NOT a MARKETER but a normal person on udemy taking a course!A 4 Year Old Course! Many had written in comments about the outdated course!It may be the outdated course! But Especially me who was a fresher in MOBILE DEV field(Experienced in WEB DEV) fells that this is the BEST COURSE to prepare for the BASE of FLUTTER.FLUTTER TEAM has updated FLUTTER CONCEPTS more frequently in last 4 years but this course will TEACH you in SUCH a WAY that is MUST to LEARN before moving to LATEST Concepts.Its like you can\'t learn reading without knowing the abcd...z letters.GOING through each video 4-5 times makes you understand deeply and it really CREATES your BASE Knowledge of FLUTTER Strong.I would really say that you will be confident to make a career in flutter!'
-          'his explanations and directions were easy to understand',
-      'It was an amazing experience! The flexibility, interactive content, and supportive community made learning [subject/course name] both enjoyable and rewarding. Highly recommend giving it a try!',
-    ],
-    instructorImage: 'assets/images/insrtactor/instractor5.png',
-    instructorCoursesCount: 2,
-    studentsFollowingCount: 951,
-    instructorRating: 1546,
-  ),
-  Course(
-    id: 3,
-    title: 'C#',
-    name: 'Complete C# Masterclass',
-    price: 259,
-    image: 'assets/images/courses/c#.png',
-    rate: 4.2,
-    aboutCourse:
-        'In this course, you are going to discover how to become a C# developer by learning all the real-world software development skills that you\'ll need.',
-    instructor: 'Mosa Ahmed',
-    hours: 6,
-    videos: 8,
-    reviews: [
-      'READ CAREFULLY! m... NOT a MARKETER but a normal person on udemy taking a course!A 4 Year Old Course! Many had written in comments about the outdated course!It may be the outdated course! But Especially me who was a fresher in MOBILE DEV field(Experienced in WEB DEV) fells that this is the BEST COURSE to prepare for the BASE of FLUTTER.FLUTTER TEAM has updated FLUTTER CONCEPTS more frequently in last 4 years but this course will TEACH you in SUCH a WAY that is MUST to LEARN before moving to LATEST Concepts.Its like you can\'t learn reading without knowing the abcd...z letters.GOING through each video 4-5 times makes you understand deeply and it really CREATES your BASE Knowledge of FLUTTER Strong.I would really say that you will be confident to make a career in flutter!'
-          'his explanations and directions were easy to understand',
-      'It was an amazing experience! The flexibility, interactive content, and supportive community made learning [subject/course name] both enjoyable and rewarding. Highly recommend giving it a try!',
-    ],
-    instructorImage: 'assets/images/insrtactor/instractor6.png',
-    instructorCoursesCount: 2,
-    studentsFollowingCount: 951,
-    instructorRating: 146,
-  ),
-  Course(
-    id: 3,
-    title: 'C#',
-    name: '.NET Core MVC - The Complete Guide 2024 [E-commerce] [.NET8]',
-    price: 259,
-    image: 'assets/images/courses/net.png',
-    rate: 4.2,
-    aboutCourse:
-        'This is a Beginner to Advanced level course on .NET 8 that will take you from basics all the way to advance mode. This course is for anyone who is new to ASP.NET Core or who is familiar with ASP.NET and wants to take the first stab at understanding what is different in ASP.NET Core. From there we would be building multiple projects to understand all concepts in .NET 8 as we will deploy our final application on Azure as well as IIS.',
-    instructor: 'Mosa Ahmed',
-    hours: 4,
-    videos: 8,
-    reviews: [
-      'READ CAREFULLY! m... NOT a MARKETER but a normal person on udemy taking a course!A 4 Year Old Course! Many had written in comments about the outdated course!It may be the outdated course! But Especially me who was a fresher in MOBILE DEV field(Experienced in WEB DEV) fells that this is the BEST COURSE to prepare for the BASE of FLUTTER.FLUTTER TEAM has updated FLUTTER CONCEPTS more frequently in last 4 years but this course will TEACH you in SUCH a WAY that is MUST to LEARN before moving to LATEST Concepts.Its like you can\'t learn reading without knowing the abcd...z letters.GOING through each video 4-5 times makes you understand deeply and it really CREATES your BASE Knowledge of FLUTTER Strong.I would really say that you will be confident to make a career in flutter!'
-          'his explanations and directions were easy to understand',
-      'It was an amazing experience! The flexibility, interactive content, and supportive community made learning [subject/course name] both enjoyable and rewarding. Highly recommend giving it a try!',
-    ],
-    instructorImage: 'assets/images/insrtactor/instractor6.png',
-    instructorCoursesCount: 2,
-    studentsFollowingCount: 951,
-    instructorRating: 146,
-  ),
-  Course(
-    id: 4,
-    title: 'Finance & Accounting',
-    name: 'Introduction to Finance, Accounting, Modeling and Valuation',
-    price: 599,
-    image: 'assets/images/courses/Finance & Accounting1.png',
-    rate: 4.7,
-    aboutCourse:
-        'This course will help you understand accounting, finance, financial modeling and valuation from scratch (no prior accounting, finance, modeling or valuation experience is required).By the end of this course, you will also know how to value companies using several different valuation methodologies that I have used during my Wall Street career so you can come up with target prices for the companies that you are analyzing.',
-    instructor: 'Arabi Keshk',
-    hours: 8,
-    videos: 8,
-    reviews: [
-      'READ CAREFULLY! m... NOT a MARKETER but a normal person on udemy taking a course!A 4 Year Old Course! Many had written in comments about the outdated course!It may be the outdated course! But Especially me who was a fresher in MOBILE DEV field(Experienced in WEB DEV) fells that this is the BEST COURSE to prepare for the BASE of FLUTTER.FLUTTER TEAM has updated FLUTTER CONCEPTS more frequently in last 4 years but this course will TEACH you in SUCH a WAY that is MUST to LEARN before moving to LATEST Concepts.Its like you can\'t learn reading without knowing the abcd...z letters.GOING through each video 4-5 times makes you understand deeply and it really CREATES your BASE Knowledge of FLUTTER Strong.I would really say that you will be confident to make a career in flutter!'
-          'his explanations and directions were easy to understand',
-      'It was an amazing experience! The flexibility, interactive content, and supportive community made learning [subject/course name] both enjoyable and rewarding. Highly recommend giving it a try!',
-    ],
-    instructorImage: 'assets/images/insrtactor/instractor7.png',
-    instructorCoursesCount: 2,
-    studentsFollowingCount: 851,
-    instructorRating: 546,
-  ),
-  Course(
-    id: 4,
-    title: 'Finance & Accounting',
-    name: 'Finance & Accounting for Management Consultants and Analysts',
-    price: 499,
-    image: 'assets/images/courses/Finance & Accounting2.png',
-    rate: 4.7,
-    aboutCourse:
-        'During many consulting projects, you will have to analyze financial statements (balance sheet, income statement, cash flows) and draw conclusions about a specific company. This is especially true during due diligence, strategic projects, and turn-arounds. Financial analyses require a relatively good understanding of finance and accounting. Business Analysts and Management Consultants who did not study Finance or Business tend to have some problems with navigating this area. This course will help you overcome this problem. Those of you who have finished Business School or Economics will find here a great refresher with a lot of practical tips on how to do certain analyses during a consulting project.',
-    instructor: 'Arabi Keshk',
-    hours: 7,
-    videos: 8,
-    reviews: [
-      'READ CAREFULLY! m... NOT a MARKETER but a normal person on udemy taking a course!A 4 Year Old Course! Many had written in comments about the outdated course!It may be the outdated course! But Especially me who was a fresher in MOBILE DEV field(Experienced in WEB DEV) fells that this is the BEST COURSE to prepare for the BASE of FLUTTER.FLUTTER TEAM has updated FLUTTER CONCEPTS more frequently in last 4 years but this course will TEACH you in SUCH a WAY that is MUST to LEARN before moving to LATEST Concepts.Its like you can\'t learn reading without knowing the abcd...z letters.GOING through each video 4-5 times makes you understand deeply and it really CREATES your BASE Knowledge of FLUTTER Strong.I would really say that you will be confident to make a career in flutter!'
-          'his explanations and directions were easy to understand',
-      'It was an amazing experience! The flexibility, interactive content, and supportive community made learning [subject/course name] both enjoyable and rewarding. Highly recommend giving it a try!',
-    ],
-    instructorImage: 'assets/images/insrtactor/instractor7.png',
-    instructorCoursesCount: 2,
-    studentsFollowingCount: 851,
-    instructorRating: 546,
-  ),
-  Course(
-    id: 5,
-    title: 'Python',
-    name: 'Machine Learning, Data Science and Generative AI with Python',
-    price: 499,
-    image: 'assets/images/courses/python.png',
-    rate: 4.9,
-    aboutCourse:
-        'In an era where Machine Learning (ML) and Artificial Intelligence (AI) are revolutionizing industries across the globe, understanding how giants like Google, Amazon, and Udemy leverage these technologies to extract meaningful insights from vast data sets is more critical than ever. Whether you\'re aiming to join the ranks of top-tier AI specialists—with an average salary of \$159,000 as reported by Glassdoor—or you\'re driven by the fascinating challenges this field offers, our course is your gateway to an exciting new career trajectory.',
-    instructor: 'Gamal Farouk',
-    hours: 8,
-    videos: 8,
-    reviews: [
-      'READ CAREFULLY! m... NOT a MARKETER but a normal person on udemy taking a course!A 4 Year Old Course! Many had written in comments about the outdated course!It may be the outdated course! But Especially me who was a fresher in MOBILE DEV field(Experienced in WEB DEV) fells that this is the BEST COURSE to prepare for the BASE of FLUTTER.FLUTTER TEAM has updated FLUTTER CONCEPTS more frequently in last 4 years but this course will TEACH you in SUCH a WAY that is MUST to LEARN before moving to LATEST Concepts.Its like you can\'t learn reading without knowing the abcd...z letters.GOING through each video 4-5 times makes you understand deeply and it really CREATES your BASE Knowledge of FLUTTER Strong.I would really say that you will be confident to make a career in flutter!'
-          'his explanations and directions were easy to understand',
-      'It was an amazing experience! The flexibility, interactive content, and supportive community made learning [subject/course name] both enjoyable and rewarding. Highly recommend giving it a try!',
-    ],
-    instructorImage: 'assets/images/insrtactor/instractor8.png',
-    instructorCoursesCount: 1,
-    studentsFollowingCount: 1201,
-    instructorRating: 956,
-  ),
-  Course(
-    id: 6,
-    title: 'Graphic Designer',
-    name: 'The Complete Graphic Design Theory for Beginners Course',
-    price: 359,
-    image: 'assets/images/courses/Graphic Designer.png',
-    rate: 4.5,
-    aboutCourse:
-        'Many people want to become designers but don\'t know the basic fundamentals of design at all.It can takes years to piece together different ideas to truly begin to understand how it even works.but it doesn\'t have to be like that.By understanding the foundations of color, typography, layout, composition, branding, and other fields of study in the graphic design realm, you can propel yourself from a beginner to an expert, just by having the right education.',
-    instructor: 'Amgad Monir',
-    hours: 5,
-    videos: 8,
-    reviews: [
-      'READ CAREFULLY! m... NOT a MARKETER but a normal person on udemy taking a course!A 4 Year Old Course! Many had written in comments about the outdated course!It may be the outdated course! But Especially me who was a fresher in MOBILE DEV field(Experienced in WEB DEV) fells that this is the BEST COURSE to prepare for the BASE of FLUTTER.FLUTTER TEAM has updated FLUTTER CONCEPTS more frequently in last 4 years but this course will TEACH you in SUCH a WAY that is MUST to LEARN before moving to LATEST Concepts.Its like you can\'t learn reading without knowing the abcd...z letters.GOING through each video 4-5 times makes you understand deeply and it really CREATES your BASE Knowledge of FLUTTER Strong.I would really say that you will be confident to make a career in flutter!'
-          'his explanations and directions were easy to understand',
-      'It was an amazing experience! The flexibility, interactive content, and supportive community made learning [subject/course name] both enjoyable and rewarding. Highly recommend giving it a try!',
-    ],
-    instructorImage: 'assets/images/insrtactor/instractor9.png',
-    instructorCoursesCount: 1,
-    studentsFollowingCount: 1501,
-    instructorRating: 1056,
+    courseId: '',
+    isBooked: false,
+    isSold: false,
   ),
 ];
+// add courseList to firebase collecion courses
+
+Future<void> addCourses() async {
+  final CollectionReference courses =
+      FirebaseFirestore.instance.collection('courses');
+  coursesList.forEach((course) async {
+    await courses.add(course.toJson());
+  });
+}

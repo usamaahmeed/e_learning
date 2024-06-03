@@ -4,23 +4,28 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_learning/Features/home/presentation/view/home_screen.dart';
 import 'package:e_learning/core/utils/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 
 class FillProfile extends StatefulWidget {
-  const FillProfile({Key? key}) : super(key: key);
+  final String email;
+  final String password;
+  const FillProfile({Key? key, required this.email, required this.password})
+      : super(key: key);
 
   @override
   State<FillProfile> createState() => _FillProfileState();
 }
 
 class _FillProfileState extends State<FillProfile> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  User? user = FirebaseAuth.instance.currentUser;
   File? _image;
   String? gender;
   String? _userType;
@@ -37,41 +42,82 @@ class _FillProfileState extends State<FillProfile> {
     }
   }
 
+  Future<String?> _uploadImage(File image) async {
+    try {
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('profile_images')
+          .child('${_auth.currentUser!.uid}.jpg');
+      await storageRef.putFile(image);
+      final downloadUrl = await storageRef.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      print('Failed to upload image: $e');
+      return null;
+    }
+  }
+
   Future<void> _updateUserProfile() async {
     if (_formKey.currentState!.validate()) {
       try {
+        _showLoadingDialog();
+
+        // Create the user
+        UserCredential userCredential =
+            await _auth.createUserWithEmailAndPassword(
+          email: widget.email,
+          password: widget.password,
+        );
+        User? user = userCredential.user;
+
         if (user != null) {
+          String? imageUrl;
+          if (_image != null) {
+            imageUrl = await _uploadImage(_image!);
+          }
+
           // Update display name and photoURL in FirebaseAuth
-          await user?.updateProfile(
+          await user.updateProfile(
             displayName: _nameController.text,
-            photoURL: _image?.path,
+            photoURL: imageUrl,
           );
 
-          // Save phone number and gender to Firestore
+          List<String> bookmarkedCourses = [];
+
+          // Save additional user information to Firestore
           await FirebaseFirestore.instance
               .collection('users')
-              .doc(user!.uid)
+              .doc(user.uid)
               .set({
             'name': _nameController.text,
-            'email': user!.email,
+            'email': user.email,
             'phone': _phoneController.text,
             'gender': gender,
-            'photoURL': _image?.path,
+            'photoURL': imageUrl,
             'userType': _userType,
             'birthdate': _selectedDate,
+            'bookmarkedCourses': bookmarkedCourses,
           });
 
-          // Navigate to the home screen if the profile update is successful
-          Navigator.pushReplacement(
+          _hideLoadingDialog();
+
+          // Navigate to the home screen
+          Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
               builder: (context) => HomeScreen(),
             ),
+            (route) => false,
           );
         }
       } catch (e) {
-        // Handle profile update errors here
-        print('Failed to update profile: $e');
+        _hideLoadingDialog();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Text('Failed to update profile: $e'),
+          ),
+        );
       }
     }
   }
@@ -90,6 +136,29 @@ class _FillProfileState extends State<FillProfile> {
     }
   }
 
+  void _showLoadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Color(0xffF5F9FF),
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text("Signing up..."),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _hideLoadingDialog() {
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -100,6 +169,19 @@ class _FillProfileState extends State<FillProfile> {
         },
         child: Scaffold(
           backgroundColor: ColorsData.backgroundColor,
+          appBar: AppBar(
+            backgroundColor: Color(0xFFF5F9FF),
+            title: Text(
+              'Fill Your Profile',
+              style: TextStyle(
+                fontSize: 21,
+                fontWeight: FontWeight.w600,
+                color: Color(0xff202244),
+              ),
+            ),
+            elevation: 0,
+            surfaceTintColor: Color(0xFFF5F9FF),
+          ),
           body: SafeArea(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
@@ -107,16 +189,6 @@ class _FillProfileState extends State<FillProfile> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 15),
-                    Text(
-                      'Fill Your Profile',
-                      style: TextStyle(
-                        color: Color(0XFF202244),
-                        fontSize: 21,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    SizedBox(height: 20),
                     Container(
                       height: 670,
                       padding: EdgeInsets.symmetric(horizontal: 10),
@@ -151,7 +223,6 @@ class _FillProfileState extends State<FillProfile> {
                               ),
                             ),
                           ),
-                          // SizedBox(height: 20),
                           TextFormField(
                             controller: _nameController,
                             keyboardType: TextInputType.text,
@@ -185,9 +256,8 @@ class _FillProfileState extends State<FillProfile> {
                               ),
                             ),
                           ),
-                          // SizedBox(height: 20),
                           TextFormField(
-                            initialValue: user!.email,
+                            initialValue: widget.email,
                             readOnly: true,
                             keyboardType: TextInputType.emailAddress,
                             validator: (value) {
@@ -223,9 +293,10 @@ class _FillProfileState extends State<FillProfile> {
                               ),
                             ),
                           ),
-                          // SizedBox(height: 20),
                           IntlPhoneField(
                             controller: _phoneController,
+                            keyboardType: TextInputType.phone,
+
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
@@ -255,9 +326,13 @@ class _FillProfileState extends State<FillProfile> {
                             onChanged: (phone) {
                               print(phone.completeNumber);
                             },
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(10)
+                            ],
+                            disableLengthCheck: true,
                           ),
-                          // SizedBox(height: 20),
                           DropdownButtonFormField<String>(
+                            dropdownColor: Colors.white,
                             value: gender,
                             decoration: InputDecoration(
                               filled: true,
@@ -306,10 +381,15 @@ class _FillProfileState extends State<FillProfile> {
                               return null;
                             },
                           ),
-                          // SizedBox(height: 20),
                           TextFormField(
                             readOnly: true,
                             onTap: () => _selectDate(context),
+                            validator: (value) {
+                              if (_selectedDate == null) {
+                                return 'Date of Birth is required';
+                              }
+                              return null;
+                            },
                             decoration: InputDecoration(
                               filled: true,
                               fillColor: Colors.white,
@@ -336,8 +416,8 @@ class _FillProfileState extends State<FillProfile> {
                               ),
                             ),
                           ),
-                          // SizedBox(height: 20),
                           DropdownButtonFormField<String>(
+                            dropdownColor: Colors.white,
                             value: _userType,
                             decoration: InputDecoration(
                               filled: true,
@@ -393,7 +473,7 @@ class _FillProfileState extends State<FillProfile> {
                     ElevatedButton(
                       onPressed: _updateUserProfile,
                       child: Text(
-                        'Sign In',
+                        'Sign Up',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
