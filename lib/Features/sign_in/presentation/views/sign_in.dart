@@ -4,6 +4,7 @@ import 'package:e_learning/Features/sign_up/presentation/views/sign_up.dart';
 import 'package:e_learning/core/utils/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -103,13 +104,17 @@ class _SignInScreenState extends State<SignInScreen> {
                       height: 50,
                     ),
                     TextFormField(
+                      inputFormatters: [
+                        FilteringTextInputFormatter.deny(
+                            RegExp(r'[#$*/(\-)<>%^&:;+_!?؟=\"\s]')),
+                      ],
                       controller: emailController,
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
                         if (value!.length < 6) {
                           return 'Email should be at least 6 characters';
                         }
-                        if (!(value!.contains('@edu') &&
+                        if (!(value.contains('@edu') &&
                             value.contains('\.com') &&
                             value.length > 6)) {
                           return 'Email should  contain @edu.com';
@@ -200,25 +205,6 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     Row(
                       children: [
-                        // Checkbox(
-                        //   side: BorderSide(width: 2, color: Color(0xff167F71)),
-                        //   checkColor: Colors.white,
-                        //   activeColor: Color(0xff167F71),
-                        //   value: _checkbox,
-                        //   onChanged: (bool? value) {
-                        //     setState(() {
-                        //       _checkbox = value!;
-                        //     });
-                        //   },
-                        // ),
-                        // const Text(
-                        //   'Remember Me',
-                        //   style: TextStyle(
-                        //     color: Color(0xff545454),
-                        //     fontSize: 13,
-                        //     fontWeight: FontWeight.w800,
-                        //   ),
-                        // ),
                         Expanded(
                           child: SizedBox(),
                         ),

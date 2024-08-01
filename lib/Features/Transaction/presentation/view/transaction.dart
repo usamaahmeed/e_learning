@@ -16,9 +16,16 @@ class BookMark extends StatefulWidget {
 }
 
 class _BookMarkState extends State<BookMark> {
-  late List<String> bookmarkedCourseIds = [];
+  @override
+  void initState() {
+    super.initState();
+    context.read<TimelineCubit>().loadInitialData();
+    initializeSoldState();
+  }
 
-  Future<void> initializeBookmarkState() async {
+  late List<String> soldCourseIds = [];
+
+  Future<void> initializeSoldState() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
@@ -28,24 +35,16 @@ class _BookMarkState extends State<BookMark> {
         DocumentSnapshot userSnapshot = await userDoc.get();
 
         if (userSnapshot.exists) {
-          List<dynamic>? bookmarkedCourses =
-              userSnapshot.get('bookmarkedCourses');
+          List<dynamic>? bookmarkedCourses = userSnapshot.get('soldCourses');
 
           setState(() {
-            bookmarkedCourseIds = bookmarkedCourses!.cast<String>();
+            soldCourseIds = bookmarkedCourses!.cast<String>();
           });
         }
       }
     } catch (e) {
       print('Failed to initialize bookmark state: ${e.toString()}');
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    initializeBookmarkState();
-    context.read<TimelineCubit>().loadInitialData();
   }
 
   @override
@@ -180,7 +179,8 @@ class _BookMarkState extends State<BookMark> {
                                               ),
                                             ),
                                             Expanded(child: SizedBox()),
-                                            course.isSold == false
+                                            !soldCourseIds
+                                                    .contains(course.courseId)
                                                 ? BookMarkWidget(course: course)
                                                 : SizedBox(),
                                           ],
@@ -198,7 +198,7 @@ class _BookMarkState extends State<BookMark> {
                                             ),
                                           ),
                                         ),
-                                        course.isSold == false
+                                        !soldCourseIds.contains(course.courseId)
                                             ? Text(
                                                 '${course.price} E£',
                                                 style: TextStyle(

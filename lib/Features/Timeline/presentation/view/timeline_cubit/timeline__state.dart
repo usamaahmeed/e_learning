@@ -12,12 +12,14 @@ class TimelineLoaded extends TimelineState {
   final List<Course> soldFilteredCourses;
   final List<Course> bookFilteredCourses;
   final List<String> bookCourses;
+  final List<String> soldCourses;
   final String selectedCategory;
 
   TimelineLoaded({
     required this.courses,
     required this.filteredCourses,
     required this.bookCourses,
+    required this.soldCourses,
     required this.soldFilteredCourses,
     required this.bookFilteredCourses,
     required this.selectedCategory,

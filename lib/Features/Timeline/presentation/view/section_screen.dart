@@ -2,19 +2,55 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_learning/Features/Timeline/presentation/view/videoPlayer.dart';
 import 'package:e_learning/core/utils/coursesVideo_model.dart';
 import 'package:e_learning/core/utils/courses_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class SectionScreen extends StatelessWidget {
+class SectionScreen extends StatefulWidget {
   final Course course;
 
   const SectionScreen({Key? key, required this.course}) : super(key: key);
+
+  @override
+  State<SectionScreen> createState() => _SectionScreenState();
+}
+
+class _SectionScreenState extends State<SectionScreen> {
+  late List<String> soldCourseIds = [];
+
+  Future<void> initializeSoldState() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        String userId = user.uid;
+        DocumentReference userDoc =
+            FirebaseFirestore.instance.collection('users').doc(userId);
+        DocumentSnapshot userSnapshot = await userDoc.get();
+
+        if (userSnapshot.exists) {
+          List<dynamic>? bookmarkedCourses = userSnapshot.get('soldCourses');
+
+          setState(() {
+            soldCourseIds = bookmarkedCourses!.cast<String>();
+          });
+        }
+      }
+    } catch (e) {
+      print('Failed to initialize bookmark state: ${e.toString()}');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initializeSoldState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
       future: FirebaseFirestore.instance
           .collection('courses')
-          .doc(course.courseId)
+          .doc(widget.course.courseId)
           .get(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -34,7 +70,7 @@ class SectionScreen extends StatelessWidget {
           final courseData = snapshot.data!.data();
           final courseVideo = CourseVideo.fromJson(courseData ?? {});
 
-          return _buildCourseScreen(context, course, courseVideo);
+          return _buildCourseScreen(context, widget.course, courseVideo);
         }
       },
     );
@@ -46,23 +82,14 @@ class SectionScreen extends StatelessWidget {
       backgroundColor: Color(0xffF5F9FF),
       appBar: AppBar(
         backgroundColor: Color(0xffF5F9FF),
-        title: course.isSold == true
-            ? Text(
-                'My Courses',
-                style: TextStyle(
-                  color: Color(0xff202244),
-                  fontWeight: FontWeight.w600,
-                  fontSize: 21,
-                ),
-              )
-            : Text(
-                'Curriculcum',
-                style: TextStyle(
-                  color: Color(0xff202244),
-                  fontWeight: FontWeight.w600,
-                  fontSize: 21,
-                ),
-              ),
+        title: Text(
+          'Lessons',
+          style: TextStyle(
+            color: Color(0xff202244),
+            fontWeight: FontWeight.w600,
+            fontSize: 21,
+          ),
+        ),
       ),
       body: Stack(
         children: [
@@ -126,7 +153,9 @@ class SectionScreen extends StatelessWidget {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                                course.isSold == true || index == 0
+                                soldCourseIds
+                                            .contains(widget.course.courseId) ||
+                                        index == 0
                                     ? GestureDetector(
                                         onTap: () {
                                           Navigator.of(context).push(
@@ -165,7 +194,7 @@ class SectionScreen extends StatelessWidget {
                 SizedBox(
                   height: 20,
                 ),
-                course.isSold == false
+                !soldCourseIds.contains(widget.course.courseId)
                     ? ElevatedButton(
                         onPressed: () {},
                         child: Text(
@@ -191,59 +220,6 @@ class SectionScreen extends StatelessWidget {
               ],
             ),
           ),
-          course.isSold == true
-              ? Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    height: 120,
-                    color: Colors.white,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        GestureDetector(
-                          onTap: () {},
-                          child: Container(
-                            height: 60,
-                            width: 94,
-                            padding: EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                                color: Color(0xffB4BDC4),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(30))),
-                            child: Container(
-                              height: 60,
-                              width: 94,
-                              padding: EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                  color: Color(0xffE8F1FF),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(30))),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        ElevatedButton(
-                          onPressed: () {},
-                          child: Text("Start Course Again"),
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(30))),
-                            fixedSize: Size(240, 60),
-                            backgroundColor: Color(0xff0961F5),
-                            padding: EdgeInsets.symmetric(horizontal: 30),
-                            textStyle: TextStyle(fontSize: 18),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-              : SizedBox(),
         ],
       ),
     );

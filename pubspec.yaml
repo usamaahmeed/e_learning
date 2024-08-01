@@ -38,7 +38,7 @@ dependencies:
   firebase_core: ^2.31.0
   google_sign_in: ^6.2.1
   firebase_auth: ^4.19.5
-  flutter_facebook_auth: ^6.2.0
+  flutter_facebook_auth: ^6.0.4
   cloud_firestore: ^4.17.3
   image_picker: ^1.1.1
   intl_phone_field: ^3.2.0
@@ -54,9 +54,11 @@ dependencies:
   chewie: ^1.8.1
   checkout_screen_ui: ^1.0.1
   shimmer: ^3.0.0
+  flutter_masked_text2: ^0.9.1
 
 
 
+  bloc: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

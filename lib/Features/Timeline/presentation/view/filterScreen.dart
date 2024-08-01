@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_learning/Features/Timeline/presentation/view/CourseDetailsPage.dart';
 import 'package:e_learning/Features/Timeline/presentation/view/timeline_cubit/timeline__cubit.dart';
 import 'package:e_learning/Features/Timeline/presentation/view/timeline_cubit/timeline__state.dart';
 import 'package:e_learning/Features/Timeline/presentation/view/widget/book_widget.dart';
 import 'package:e_learning/core/utils/courses_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -246,7 +248,7 @@ class _FilteredCoursesScreenState extends State<FilteredCoursesScreen>
   }
 }
 
-class CourseWidget extends StatelessWidget {
+class CourseWidget extends StatefulWidget {
   const CourseWidget({
     super.key,
     required this.course,
@@ -255,13 +257,47 @@ class CourseWidget extends StatelessWidget {
   final Course course;
 
   @override
+  State<CourseWidget> createState() => _CourseWidgetState();
+}
+
+class _CourseWidgetState extends State<CourseWidget> {
+  late List<String> soldCourseIds = [];
+  @override
+  void initState() {
+    super.initState();
+    initializeSoldState();
+  }
+
+  Future<void> initializeSoldState() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        String userId = user.uid;
+        DocumentReference userDoc =
+            FirebaseFirestore.instance.collection('users').doc(userId);
+        DocumentSnapshot userSnapshot = await userDoc.get();
+
+        if (userSnapshot.exists) {
+          List<dynamic>? bookmarkedCourses = userSnapshot.get('soldCourses');
+
+          setState(() {
+            soldCourseIds = bookmarkedCourses!.cast<String>();
+          });
+        }
+      }
+    } catch (e) {
+      print('Failed to initialize bookmark state: ${e.toString()}');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CourseDetailsPage(course: course),
+            builder: (context) => CourseDetailsPage(course: widget.course),
           ),
         );
       },
@@ -282,7 +318,7 @@ class CourseWidget extends StatelessWidget {
                   ),
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: CachedNetworkImageProvider(course.image),
+                    image: CachedNetworkImageProvider(widget.course.image),
                   )),
             ),
             Container(
@@ -301,7 +337,7 @@ class CourseWidget extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        course.title,
+                        widget.course.title,
                         style: TextStyle(
                           color: Color(0xffFF6B00),
                           fontSize: 14,
@@ -309,15 +345,15 @@ class CourseWidget extends StatelessWidget {
                         ),
                       ),
                       Expanded(child: SizedBox()),
-                      course.isSold == false
-                          ? BookMarkWidget(course: course)
+                      !soldCourseIds.contains(widget.course.courseId)
+                          ? BookMarkWidget(course: widget.course)
                           : SizedBox(),
                     ],
                   ),
                   Container(
                     width: 200,
                     child: Text(
-                      course.name,
+                      widget.course.name,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                       style: TextStyle(
@@ -327,9 +363,9 @@ class CourseWidget extends StatelessWidget {
                       ),
                     ),
                   ),
-                  course.isSold == false
+                  !soldCourseIds.contains(widget.course.courseId)
                       ? Text(
-                          '${course.price} E£',
+                          '${widget.course.price} E£',
                           style: TextStyle(
                             color: Color(0xff0961F5),
                             fontSize: 15,
@@ -344,7 +380,7 @@ class CourseWidget extends StatelessWidget {
                         color: Color(0xffFAC025),
                       ),
                       Text(
-                        course.rate.toString(),
+                        widget.course.rate.toString(),
                         style: TextStyle(
                           color: Color(0xff202244),
                           fontSize: 13,

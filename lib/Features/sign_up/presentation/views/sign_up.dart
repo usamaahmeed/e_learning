@@ -141,7 +141,8 @@ class _SignInScreenState extends State<SignUpScreen> {
                     ),
                     TextFormField(
                       inputFormatters: [
-                        FilteringTextInputFormatter.deny(RegExp(r'[@.]')),
+                        FilteringTextInputFormatter.deny(
+                            RegExp(r'[@.#$*/(\-)+<>%^&:_;!?؟=\"\s]')),
                       ],
                       controller: emailController,
                       keyboardType: TextInputType.emailAddress,
@@ -299,11 +300,9 @@ class _SignInScreenState extends State<SignUpScreen> {
                             List<UserModel> listOfUsers = [];
                             for (final userDoc in signInMethods.docs) {
                               final data = userDoc.data();
-                              if (data != null) {
-                                final modelUser = UserModel.fromJson(data);
-                                listOfUsers.add(modelUser);
-                                print(listOfUsers);
-                              }
+                              final modelUser = UserModel.fromJson(data);
+                              listOfUsers.add(modelUser);
+                              print(listOfUsers);
                             }
 
                             if (listOfUsers

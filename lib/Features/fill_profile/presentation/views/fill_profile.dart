@@ -83,6 +83,7 @@ class _FillProfileState extends State<FillProfile> {
           );
 
           List<String> bookmarkedCourses = [];
+          List<String> soldCourses = [];
 
           // Save additional user information to Firestore
           await FirebaseFirestore.instance
@@ -97,6 +98,7 @@ class _FillProfileState extends State<FillProfile> {
             'userType': _userType,
             'birthdate': _selectedDate,
             'bookmarkedCourses': bookmarkedCourses,
+            'soldCourses': soldCourses,
           });
 
           _hideLoadingDialog();

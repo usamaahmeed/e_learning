@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_learning/Features/Timeline/presentation/view/payment_page.dart';
 import 'package:e_learning/Features/Timeline/presentation/view/section_screen.dart';
 import 'package:e_learning/Features/Timeline/presentation/view/videoPlayer.dart';
 import 'package:e_learning/core/utils/coursesVideo_model.dart';
 import 'package:e_learning/core/utils/courses_model.dart';
 import 'package:e_learning/core/utils/data.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -22,12 +24,37 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
   late TabController _tabController;
   int _currentTabIndex = 0;
 
+  late List<String> soldCourseIds = [];
+
+  Future<void> initializeSoldState() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        String userId = user.uid;
+        DocumentReference userDoc =
+            FirebaseFirestore.instance.collection('users').doc(userId);
+        DocumentSnapshot userSnapshot = await userDoc.get();
+
+        if (userSnapshot.exists) {
+          List<dynamic>? bookmarkedCourses = userSnapshot.get('soldCourses');
+
+          setState(() {
+            soldCourseIds = bookmarkedCourses!.cast<String>();
+          });
+        }
+      }
+    } catch (e) {
+      print('Failed to initialize bookmark state: ${e.toString()}');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
 
     _tabController.addListener(_handleTabSelection);
+    initializeSoldState();
   }
 
   void _handleTabSelection() {
@@ -98,12 +125,24 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
                                     Row(
                                       children: [
                                         Expanded(child: SizedBox()),
-                                        CircleAvatar(
-                                          radius: 30,
-                                          backgroundColor: Color(0xff167F71),
-                                          child: Icon(
-                                            Icons.video_library_outlined,
-                                            color: Colors.white,
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    SectionScreen(
+                                                  course: widget.course,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: CircleAvatar(
+                                            radius: 30,
+                                            backgroundColor: Color(0xff167F71),
+                                            child: Icon(
+                                              Icons.video_library_outlined,
+                                              color: Colors.white,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -281,7 +320,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
                                 ),
                                 child: Center(
                                   child: Text(
-                                    'Curriculum',
+                                    'Lessons',
                                     style: TextStyle(
                                       fontWeight: FontWeight.w800,
                                       fontSize: 15,
@@ -303,6 +342,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
                                   widget: widget, reviewsImages: reviewsImages),
                               TabWidgetNum2(
                                 course: widget.course,
+                                soldCourseIds: soldCourseIds,
                               ),
                             ],
                           ),
@@ -320,18 +360,18 @@ class _CourseDetailsPageState extends State<CourseDetailsPage>
               child: Center(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: widget.course.isSold == false
+                  child: !soldCourseIds.contains(widget.course.courseId)
                       ? ElevatedButton(
                           onPressed: () {
                             //push to MyDemoPage
 
-                            // Navigator.of(context).pushReplacement(
-                            //   MaterialPageRoute(
-                            //     builder: (context) => MyDemoPage(
-                            //       course: widget.course,
-                            //     ),
-                            //   ),
-                            // );
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => MyDemoPage(
+                                  course: widget.course,
+                                ),
+                              ),
+                            );
                           },
                           child: Text(
                             'Enroll Course ${widget.course.price} E£',
@@ -475,10 +515,10 @@ class TabWidgetNum1 extends StatelessWidget {
                         child: SizedBox(
                       height: 10,
                     )),
-                    Icon(
-                      Icons.chat,
-                      color: Colors.grey,
-                    )
+                    // Icon(
+                    //   Icons.chat,
+                    //   color: Colors.grey,
+                    // )
                   ],
                 ),
                 const SizedBox(
@@ -643,23 +683,23 @@ class TabWidgetNum1 extends StatelessWidget {
                         height: 0,
                       ),
                     ),
-                    Row(
-                      children: [
-                        Text(
-                          'See All',
-                          style: TextStyle(
-                            color: Color(0xff0961F5),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        Icon(
-                          Icons.arrow_forward_ios_outlined,
-                          color: Color(0xff0961F5),
-                          size: 18,
-                        ),
-                      ],
-                    )
+                    // Row(
+                    //   children: [
+                    //     Text(
+                    //       'See All',
+                    //       style: TextStyle(
+                    //         color: Color(0xff0961F5),
+                    //         fontSize: 14,
+                    //         fontWeight: FontWeight.w700,
+                    //       ),
+                    //     ),
+                    //     Icon(
+                    //       Icons.arrow_forward_ios_outlined,
+                    //       color: Color(0xff0961F5),
+                    //       size: 18,
+                    //     ),
+                    //   ],
+                    // )
                   ],
                 ),
                 const SizedBox(
@@ -732,9 +772,11 @@ class TabWidgetNum1 extends StatelessWidget {
 
 class TabWidgetNum2 extends StatefulWidget {
   final Course course;
+  final List<String> soldCourseIds;
   const TabWidgetNum2({
     super.key,
     required this.course,
+    required this.soldCourseIds,
   });
 
   @override
@@ -783,8 +825,7 @@ class _TabWidgetNum2State extends State<TabWidgetNum2> {
                         return Divider();
                       },
                       itemBuilder: (BuildContext context, int index) {
-                        var video =
-                            courseVideo.videos[index] as Map<String, dynamic>;
+                        var video = courseVideo.videos[index];
                         return Container(
                           padding: EdgeInsets.all(10),
                           decoration: BoxDecoration(
@@ -823,7 +864,9 @@ class _TabWidgetNum2State extends State<TabWidgetNum2> {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              widget.course.isSold == true || index == 0
+                              widget.soldCourseIds
+                                          .contains(widget.course.courseId) ||
+                                      index == 0
                                   ? GestureDetector(
                                       onTap: () {
                                         Navigator.of(context).push(

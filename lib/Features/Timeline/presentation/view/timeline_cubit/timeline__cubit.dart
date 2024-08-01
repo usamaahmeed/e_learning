@@ -17,14 +17,13 @@ class TimelineCubit extends Cubit<TimelineState> {
       List<Course> listOfCourses = [];
       for (final courseDoc in theCourse.docs) {
         final data = courseDoc.data();
-        if (data != null) {
-          final modelCourse = Course.fromJson(data);
-          listOfCourses.add(modelCourse);
-        }
+        final modelCourse = Course.fromJson(data);
+        listOfCourses.add(modelCourse);
       }
 
       User? user = FirebaseAuth.instance.currentUser;
       List<String> bookCourses = [];
+      List<String> soldCourses = [];
 
       if (user != null) {
         String userId = user.uid;
@@ -35,9 +34,19 @@ class TimelineCubit extends Cubit<TimelineState> {
         if (userSnapshot.exists) {
           List<dynamic> bookmarkedCourses =
               userSnapshot.get('bookmarkedCourses') ?? [];
-          if (bookmarkedCourses != null) {
-            bookCourses = List<String>.from(bookmarkedCourses);
-          }
+          bookCourses = List<String>.from(bookmarkedCourses);
+        }
+      }
+      if (user != null) {
+        String userId = user.uid;
+        DocumentReference userDoc =
+            FirebaseFirestore.instance.collection('users').doc(userId);
+        DocumentSnapshot userSnapshot = await userDoc.get();
+
+        if (userSnapshot.exists) {
+          List<dynamic> bookmarkedCourses =
+              userSnapshot.get('soldCourses') ?? [];
+          soldCourses = List<String>.from(bookmarkedCourses);
         }
       }
 
@@ -47,13 +56,15 @@ class TimelineCubit extends Cubit<TimelineState> {
       emit(TimelineLoaded(
         courses: listOfCourses,
         filteredCourses: listOfCourses,
-        soldFilteredCourses:
-            listOfCourses.where((course) => course.isSold).toList(),
+        soldFilteredCourses: listOfCourses
+            .where((course) => soldCourses.contains(course.courseId))
+            .toList(),
         bookFilteredCourses: listOfCourses
             .where((course) => bookCourses.contains(course.courseId))
             .toList(),
         selectedCategory: "All",
         bookCourses: bookCourses,
+        soldCourses: soldCourses,
       ));
     } catch (e) {
       emit(TimelineError("Failed to load courses: ${e.toString()}"));
@@ -74,6 +85,7 @@ class TimelineCubit extends Cubit<TimelineState> {
         selectedCategory: state.selectedCategory,
         bookFilteredCourses: state.bookFilteredCourses,
         bookCourses: state.bookCourses,
+        soldCourses: state.soldCourses,
       ));
     }
   }
@@ -92,6 +104,7 @@ class TimelineCubit extends Cubit<TimelineState> {
         selectedCategory: state.selectedCategory,
         bookFilteredCourses: updatedBookFilteredCourses,
         bookCourses: state.bookCourses,
+        soldCourses: state.soldCourses,
       ));
     }
   }
@@ -106,20 +119,25 @@ class TimelineCubit extends Cubit<TimelineState> {
       if (category == "All") {
         filteredCourses = state.courses;
 
-        soldFilteredCourses =
-            state.courses.where((course) => course.isSold).toList();
         bookFilteredCourses = state.courses
             .where((course) => state.bookCourses.contains(course.courseId))
+            .toList();
+        soldFilteredCourses = state.courses
+            .where((course) => state.soldCourses.contains(course.courseId))
             .toList();
       } else {
         filteredCourses =
             state.courses.where((course) => course.title == category).toList();
-        soldFilteredCourses =
-            filteredCourses.where((course) => course.isSold).toList();
+
         bookFilteredCourses = state.courses
             .where((course) =>
                 course.title == category &&
                 state.bookCourses.contains(course.courseId))
+            .toList();
+        soldFilteredCourses = state.courses
+            .where((course) =>
+                course.title == category &&
+                state.soldCourses.contains(course.courseId))
             .toList();
       }
 
@@ -130,6 +148,7 @@ class TimelineCubit extends Cubit<TimelineState> {
         selectedCategory: category,
         bookFilteredCourses: bookFilteredCourses,
         bookCourses: state.bookCourses,
+        soldCourses: state.soldCourses,
       ));
     }
   }

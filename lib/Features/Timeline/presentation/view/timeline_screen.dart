@@ -88,14 +88,37 @@ class TimelineView extends StatelessWidget {
                             ],
                           ),
                           Expanded(child: SizedBox()),
-                          CircleAvatar(
-                            radius: 25,
-                            backgroundColor: Color(0xffE8F1FF),
-                            backgroundImage: user.photoURL != null
-                                ? CachedNetworkImageProvider(
-                                    user.photoURL!,
-                                  )
-                                : AssetImage('assets/images/avatar.png'),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const DetailPage(),
+                                ),
+                              );
+                            },
+                            child: Hero(
+                              tag: 'hero-tag',
+                              key: ValueKey('hero-tag'),
+                              child: CircleAvatar(
+                                backgroundColor: Color(0xffE8F1FF),
+                                radius: 25,
+                                backgroundImage: user.photoURL != null
+                                    ? CachedNetworkImageProvider(
+                                        user.photoURL!,
+                                      )
+                                    : AssetImage('assets/images/avatar.png'),
+                              ),
+                            ),
+                            // child: CircleAvatar(
+                            //   radius: 25,
+                            //   backgroundColor: Color(0xffE8F1FF),
+                            //   backgroundImage: user.photoURL != null
+                            //       ? CachedNetworkImageProvider(
+                            //           user.photoURL!,
+                            //         )
+                            //       : AssetImage('assets/images/avatar.png'),
+                            // ),
                           ),
                         ],
                       ),
@@ -430,7 +453,9 @@ class TimelineView extends StatelessWidget {
 
                                                       // icon bookmark stream update data in firebase
 
-                                                      course.isSold == false
+                                                      !state.soldCourses
+                                                              .contains(course
+                                                                  .courseId)
                                                           ? BookMarkWidget(
                                                               course: course)
                                                           : SizedBox(),
@@ -455,15 +480,18 @@ class TimelineView extends StatelessWidget {
                                                   Container(
                                                     width: 120,
                                                     child: Row(
-                                                      mainAxisAlignment: course
-                                                                  .isSold ==
-                                                              false
+                                                      mainAxisAlignment: !state
+                                                              .soldCourses
+                                                              .contains(course
+                                                                  .courseId)
                                                           ? MainAxisAlignment
                                                               .spaceBetween
                                                           : MainAxisAlignment
                                                               .start,
                                                       children: [
-                                                        course.isSold == false
+                                                        !state.soldCourses
+                                                                .contains(course
+                                                                    .courseId)
                                                             ? Text(
                                                                 '${course.price} E£',
                                                                 style:
@@ -477,7 +505,9 @@ class TimelineView extends StatelessWidget {
                                                                 ),
                                                               )
                                                             : SizedBox(),
-                                                        course.isSold == false
+                                                        !state.soldCourses
+                                                                .contains(course
+                                                                    .courseId)
                                                             ? Text(
                                                                 '|',
                                                                 style:
@@ -573,7 +603,7 @@ class TimelineView extends StatelessWidget {
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
-                            children: (state as TimelineLoaded)
+                            children: (state)
                                 .courses
                                 .map((course) => course.instructor)
                                 .toSet()
@@ -647,6 +677,44 @@ class TimelineView extends StatelessWidget {
               ],
             );
           },
+        ),
+      ),
+    );
+  }
+}
+
+class DetailPage extends StatelessWidget {
+  const DetailPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    return Scaffold(
+      backgroundColor: Color(0xFFF5F9FF),
+      appBar: AppBar(
+        title: Text(
+          '${user!.displayName}',
+          style: TextStyle(
+            fontSize: 21,
+            fontWeight: FontWeight.w600,
+            color: Color(0xff202244),
+          ),
+        ),
+        elevation: 0,
+        backgroundColor: Color(0xFFF5F9FF),
+      ),
+      body: Center(
+        child: Hero(
+          tag: 'hero-tag',
+          key: ValueKey('hero-tag'),
+          child: Image(
+            image: user.photoURL != null
+                ? CachedNetworkImageProvider(
+                    user.photoURL!,
+                  )
+                : AssetImage('assets/images/avatar.png'),
+          ),
         ),
       ),
     );

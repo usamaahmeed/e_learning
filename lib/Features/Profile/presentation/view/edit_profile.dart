@@ -35,7 +35,7 @@ class _EditProfileState extends State<EditProfile> {
         gender = userDoc['gender'];
         stuts = userDoc['userType'];
 
-        phone = '0' + phoneNumber!;
+        phone!.length != 1 ? phone = '0' + phoneNumber! : phone = '01234567890';
       });
     } catch (e) {
       print('Error fetching user profile: $e');
